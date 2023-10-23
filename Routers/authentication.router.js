@@ -8,9 +8,14 @@ const authenticationRoute=express.Router()
 authenticationRoute.post("/register", async(req,res)=>{
     const payload=req.body;
    try {
-            const user=new AuthenticationModel(payload);
-            await user.save();
-            res.status(200).send({"msg":"user SignUp successfully"});
+    if(payload.username && payload.email && payload.password){
+        const user=new AuthenticationModel(payload);
+        await user.save();
+        res.status(200).send({"msg":"user SignUp successfully",token:jwt.sign({"name":user._id},"ironmen")});
+    }
+    else{
+        res.status(400).send({msg:"Invalid Input !",});
+    }
    } catch (error) {
         res.status(200).send({"msg":error.message});
    }
